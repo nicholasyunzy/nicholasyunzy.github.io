@@ -49,6 +49,15 @@ const collectionImageFiles = import.meta.glob(
   },
 );
 
+const collectionDocumentFiles = import.meta.glob(
+  './content/collections/**/*.pdf',
+  {
+    eager: true,
+    import: 'default',
+    query: '?url',
+  },
+);
+
 const fallbackProjects = [
   {
     title: 'News Aggregator',
@@ -95,7 +104,7 @@ const fallbackProjects = [
     category: 'Photography',
     accent: '#f2b705',
     medium: 'Photography',
-    status: 'Archive',
+    status: 'Growing collection',
     description:
       'A collection space for images, places, textures, moods, and small visual observations from everyday life.',
     linkLabel: 'Open Gallery',
@@ -148,7 +157,8 @@ const collectionDefinitions = {
     accent: '#00a77f',
     category: 'Art',
     description:
-      'Visual studies, artwork, sketches, and image-led experiments gathered into a browsable archive.',
+      'Visual studies, artwork, sketches, and image-led experiments gathered into a growing collection.',
+    status: 'Growing collection',
     title: 'Artworks',
   },
   design: {
@@ -163,7 +173,8 @@ const collectionDefinitions = {
     accent: '#f2b705',
     category: 'Photography',
     description:
-      'A visual archive of photographs, places, textures, light, and small observations.',
+      'A growing visual collection of photographs, places, textures, light, and small observations.',
+    status: 'Growing collection',
     title: 'Photography',
   },
   poetry: {
@@ -171,6 +182,7 @@ const collectionDefinitions = {
     category: 'Poetry',
     description:
       'Poems and fragments arranged as short readings, with snippets you can browse before opening the full piece.',
+    status: 'Growing collection',
     title: 'Poetry',
   },
   stories: {
@@ -178,6 +190,7 @@ const collectionDefinitions = {
     category: 'Storytelling',
     description:
       'Story sketches, narrative fragments, character ideas, and worlds in progress.',
+    status: 'Growing collection',
     title: 'Stories',
   },
   'web-experiments': {
@@ -301,7 +314,7 @@ const buildPortfolioProjects = () => {
         category: projectCategory,
         description: data.description || firstParagraph,
         image: data.image || siblingImage?.[1],
-        link: collectionSlug ? `#/archive/${collectionSlug}` : data.link,
+        link: collectionSlug ? `#/collections/${collectionSlug}` : data.link,
         linkLabel: collectionSlug
           ? `Open ${collectionDefinition.title}`
           : data.linkLabel || 'Open',
@@ -316,6 +329,7 @@ const buildPortfolioProjects = () => {
 
 const buildCollectionItems = () => {
   const imageEntries = Object.entries(collectionImageFiles);
+  const documentEntries = Object.entries(collectionDocumentFiles);
   const textEntries = Object.entries(collectionTextFiles).filter(
     ([path]) => !isCollectionGuideFile(path),
   );
@@ -334,18 +348,25 @@ const buildCollectionItems = () => {
         getFilenameSlug(imagePath) === filename
       );
     });
+    const siblingDocument = documentEntries.find(([documentPath]) => {
+      return (
+        getCollectionSlug(documentPath) === collectionSlug &&
+        getFilenameSlug(documentPath) === filename
+      );
+    });
 
     return {
       accent: data.accent || collection?.accent || '#16a3b8',
       body,
       collectionSlug,
       description: data.description || getExcerpt(body),
+      document: siblingDocument?.[1],
       image: data.image || siblingImage?.[1],
-      link: data.link,
-      linkLabel: data.linkLabel || 'Open Live Project',
+      link: data.link || siblingDocument?.[1],
+      linkLabel: data.linkLabel || (siblingDocument ? 'Open PDF' : 'Open Live Project'),
       medium: data.medium || collection?.title || toTitleCase(collectionSlug),
       slug: filename,
-      status: data.status || 'Archive item',
+      status: data.status || 'Collection item',
       title: data.title || toTitleCase(filename),
     };
   });
@@ -365,13 +386,13 @@ const buildCollectionItems = () => {
         accent: collection?.accent || '#16a3b8',
         body: '',
         collectionSlug,
-        description: `A ${collection?.title.toLowerCase() || 'collection'} item from Nicholas Yun's archive.`,
+        description: `A ${collection?.title.toLowerCase() || 'collection'} item from Nicholas Yun's growing collection.`,
         image,
         link: null,
         linkLabel: 'Open',
         medium: collection?.title || toTitleCase(collectionSlug),
         slug: filename,
-        status: 'Archive item',
+        status: 'Collection item',
         title: toTitleCase(filename),
       };
     });
@@ -390,17 +411,17 @@ const buildPortfolioGateways = () =>
       category: collection.category,
       description: collection.description,
       image: null,
-      link: `#/archive/${slug}`,
+      link: `#/collections/${slug}`,
       linkLabel: `Open ${collection.title}`,
       medium: null,
       slug,
-      status: collection.status || 'Archive',
+      status: collection.status || 'Growing collection',
       title: collection.title,
     };
   });
 
 const parseArchiveRoute = (hash) => {
-  const match = hash.match(/^#\/archive\/([^/]+)(?:\/([^/]+))?/);
+  const match = hash.match(/^#\/(?:archive|collections)\/([^/]+)(?:\/([^/]+))?/);
 
   if (!match) {
     return null;
@@ -432,9 +453,8 @@ const heroSlides = [
   {
     label: 'Creative Technologist',
     portraitKey: 'creative-technologist',
-    headline: 'I build little worlds for ideas.',
-    subtitle:
-      'Useful tools, playful artifacts, visual systems, written fragments, and experiments that make curiosity visible.',
+    headline: 'Ideas, made tangible.',
+    subtitle: 'Code. Design. Words. Images. Experiments.',
     artifactTitle: 'Idea → Interface → Feeling',
     artifactMeta: 'Code / Design / Words',
     signature: 'MAKE IT REAL',
@@ -443,13 +463,12 @@ const heroSlides = [
     tags: ['Code', 'Design', 'Writing'],
   },
   {
-    label: 'Project Archive',
+    label: 'Growing Collections',
     portraitKey: 'project-archive',
-    headline: 'A gallery of things that refused to stay imaginary.',
-    subtitle:
-      'Birthday cards, news tools, website concepts, poems, images, stories, prototypes, and the odd sparks between them.',
+    headline: 'A living shelf of work.',
+    subtitle: 'Tools, cards, poems, photos, stories, and odd sparks.',
     artifactTitle: 'Many Mediums, One Point Of View',
-    artifactMeta: 'Archive / Experiments / Selected work',
+    artifactMeta: 'Collections / Experiments / Selected work',
     signature: 'COLLECT THE SPARKS',
     accent: '#ffd166',
     secondaryAccent: '#7c5cff',
@@ -458,9 +477,8 @@ const heroSlides = [
   {
     label: 'Open To Collaborate',
     portraitKey: 'open-to-collaborate',
-    headline: 'Bring me the strange, useful, human idea.',
-    subtitle:
-      'I am interested in projects that need taste, structure, imagination, and enough technical care to actually ship.',
+    headline: 'Useful, human ideas welcome.',
+    subtitle: 'Hiring, collaborations, and creative tech projects.',
     artifactTitle: 'Hire / Collaborate / Build',
     artifactMeta: 'Best first step: email',
     signature: 'START THE THREAD',
@@ -474,25 +492,22 @@ const aboutPillars = [
   {
     title: 'How I Think',
     paragraphs: [
-      'I rarely begin with a finished plan.',
-      'Most projects start with a question, an observation, or a problem that feels worth understanding. From there, I move between research, structure, design, and experimentation until the idea becomes clear.',
-      'I value curiosity, but I care just as much about execution. Good ideas become meaningful when they are refined, tested, and shared.',
+      'I follow curiosity until the shape becomes clear.',
+      'Research. Structure. Test. Refine.',
     ],
   },
   {
     title: 'What I Make',
     paragraphs: [
-      'I build things that help people learn, decide, reflect, or connect.',
-      'My work includes websites, software projects, visual designs, photography, writing, personal experiments, and small digital products. Some are practical. Some are creative. Some exist simply because I wanted to understand something better.',
-      'I enjoy projects that sit at the intersection of disciplines rather than fitting neatly into a single category.',
+      'Websites, tools, writing, photography, visuals, and stories.',
+      'Useful when possible. Personal always.',
     ],
   },
   {
     title: 'How I Work',
     paragraphs: [
-      'I care about clarity, craft, and follow through.',
-      "Whether I'm writing, designing, building, or researching, I aim to make things feel thoughtful and approachable. I believe details matter, but only when they serve the bigger idea.",
-      'My goal is simple: create work that is useful, personal, and memorable enough to be worth sharing.',
+      'Clarity first. Craft in the details.',
+      'Thoughtful, approachable, finished enough to share.',
     ],
   },
 ];
@@ -532,7 +547,6 @@ const socialLinks = [
   },
 ];
 
-const ABOUT_ROTATION_INTERVAL = 9000;
 const ABOUT_FADE_DURATION = 900;
 
 function BrandMark() {
@@ -640,8 +654,8 @@ function ArchivePage({ activeItem, collection, items }) {
       style={{ '--archive-accent': collection.accent }}
     >
       <div className="archive-header">
-        <a className="archive-back" href={activeItem ? `#/archive/${collection.slug}` : '#projects'}>
-          {activeItem ? `Back to ${collection.title}` : 'Back to Projects'}
+        <a className="archive-back" href={activeItem ? `#/collections/${collection.slug}` : '#projects'}>
+          {activeItem ? `Back to ${collection.title}` : 'Back to Collections'}
         </a>
         <p className="eyebrow">{collection.category}</p>
         <h1>{activeItem ? activeItem.title : collection.title}</h1>
@@ -668,7 +682,7 @@ function ArchivePage({ activeItem, collection, items }) {
             items.map((item) => (
               <a
                 className="archive-item-card"
-                href={`#/archive/${collection.slug}/${item.slug}`}
+                href={`#/collections/${collection.slug}/${item.slug}`}
                 key={item.slug}
               >
                 {item.image ? (
@@ -684,7 +698,7 @@ function ArchivePage({ activeItem, collection, items }) {
           ) : (
             <div className="archive-empty">
               <h2>No items yet.</h2>
-              <p>This archive is waiting for its first piece.</p>
+              <p>This growing collection is waiting for its first piece.</p>
             </div>
           )}
         </div>
@@ -817,17 +831,8 @@ function App() {
   }, [isMenuOpen]);
 
   useEffect(() => {
-    const rotation = window.setInterval(() => {
-      showAboutPillar(
-        activeAboutIndex === aboutPillars.length - 1 ? 0 : activeAboutIndex + 1,
-      );
-    }, ABOUT_ROTATION_INTERVAL);
-
-    return () => {
-      window.clearInterval(rotation);
-      window.clearTimeout(aboutFadeTimerRef.current);
-    };
-  }, [activeAboutIndex]);
+    return () => window.clearTimeout(aboutFadeTimerRef.current);
+  }, []);
 
   const closeMenu = () => setIsMenuOpen(false);
 
@@ -1119,24 +1124,16 @@ function App() {
 
             <div className="about-summary">
               <p className="about-lede">
-                I'm a creative technologist who enjoys turning ideas into things
-                people can use, understand, and share.
+                Creative technologist. Curious by nature. Intentional by practice.
               </p>
               <p>
-                My work sits between technology, design, writing, research, and
-                storytelling. Sometimes that becomes a website. Sometimes it's
-                a tool, a visual experiment, a photograph, a piece of writing,
-                or a small project built simply to explore a question.
-              </p>
-              <p>
-                What connects everything is a desire to make complexity feel
-                clear. I enjoy learning deeply, finding patterns, and shaping
-                ideas into something useful enough to leave behind.
+                I turn ideas into tools, visuals, stories, and small digital
+                products people can use, understand, and share.
               </p>
             </div>
           </div>
 
-          <div className="about-flow" aria-label="Rotating about focus">
+          <div className="about-flow" aria-label="About focus">
             <div className="about-flow-rail" aria-label="About focus controls">
               {aboutPillars.map((pillar, index) => (
                 <button
@@ -1187,18 +1184,14 @@ function App() {
           <div className="projects-layout">
             <div className="section-header">
               <p className="eyebrow">Portfolio</p>
-              <h2>Selected Projects</h2>
+              <h2>Growing Collections</h2>
               <p>
-                A curated set of entrances into tools, images, writing, visual
-                studies, stories, and experiments. Different forms, one thread:
-                curiosity turned into tangible things.
+                Six entrances into the things I make and keep making.
               </p>
             </div>
 
             <p className="projects-note">
-              Think of this as a small exhibition of work in progress and work
-              worth keeping: practical, personal, exploratory, and built to be
-              shared.
+              Open a collection. Follow the thread.
             </p>
           </div>
 
@@ -1212,8 +1205,7 @@ function App() {
             <p className="eyebrow">Contact</p>
             <h2>Let's build something together.</h2>
             <p>
-              Reach out for hiring, collaboration, or project conversations.
-              Email is the best first step.
+              Email is best. The rest of the trail is below.
             </p>
 
             <div className="contact-actions">

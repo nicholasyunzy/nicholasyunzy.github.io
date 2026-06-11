@@ -1,11 +1,11 @@
 # Collection Folders
 
-These folders power the archive pages on the website.
+These folders power the growing collection pages on the website.
 
-- `poetry/` appears at `#/archive/poetry`
-- `photography/` appears at `#/archive/photography`
-- `artworks/` appears at `#/archive/artworks`
-- `stories/` appears at `#/archive/stories`
+- `poetry/` appears at `#/collections/poetry`
+- `photography/` appears at `#/collections/photography`
+- `artworks/` appears at `#/collections/artworks`
+- `stories/` appears at `#/collections/stories`
 
 Add `.md` or `.txt` files for written pieces. Add `.jpg`, `.jpeg`, `.png`, `.webp`, or `.avif` files for images.
 
