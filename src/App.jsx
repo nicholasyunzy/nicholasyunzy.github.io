@@ -1124,11 +1124,10 @@ function App() {
 
             <div className="about-summary">
               <p className="about-lede">
-                Creative technologist. Curious by nature. Intentional by practice.
+                Creative technologist.
               </p>
               <p>
-                I turn ideas into tools, visuals, stories, and small digital
-                products people can use, understand, and share.
+                Ideas into tools, visuals, stories, and small digital products.
               </p>
             </div>
           </div>

@@ -4169,3 +4169,242 @@ body {
     box-shadow: inset 0 0 0 5px #fff8e8;
   }
 }
+
+/* Mobile editorial pass: fewer words, tighter rhythm, more visual scanning */
+@media (max-width: 760px) {
+  .page-section {
+    padding: 58px 18px;
+  }
+
+  .hero-section {
+    min-height: auto;
+    padding: 78px 18px 40px;
+  }
+
+  .hero-layout {
+    gap: 18px;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  .hero-section .eyebrow,
+  .page-section .eyebrow {
+    margin-bottom: 10px;
+    font-size: 0.74rem;
+  }
+
+  .hero-section h1 {
+    margin-bottom: 10px;
+    font-size: clamp(2.65rem, 14vw, 4rem);
+  }
+
+  .hero-kicker {
+    max-width: 11ch;
+    margin-bottom: 12px;
+    font-size: clamp(1.65rem, 8vw, 2.35rem);
+  }
+
+  .hero-copy,
+  .hero-slide-note,
+  .portrait-caption,
+  .portrait-orbit-tags,
+  .scroll-cue {
+    display: none;
+  }
+
+  .hero-actions {
+    margin-top: 18px;
+  }
+
+  .hero-actions .button.secondary {
+    display: none;
+  }
+
+  .hero-section .button.primary {
+    width: fit-content;
+    min-height: 42px;
+    padding: 10px 16px;
+  }
+
+  .hero-stage {
+    padding: 0 36px 30px;
+  }
+
+  .portrait-shell {
+    gap: 0;
+  }
+
+  .portrait-frame {
+    width: min(100%, 260px);
+    border-radius: 18px;
+  }
+
+  .hero-arrow {
+    top: 44%;
+    width: 34px;
+    height: 34px;
+  }
+
+  .about-section {
+    padding-top: 56px;
+    padding-bottom: 44px;
+  }
+
+  .about-layout {
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+
+  .about-layout .section-header h2,
+  .projects-layout .section-header h2,
+  .contact-compact h2 {
+    font-size: clamp(2.15rem, 10vw, 3.1rem);
+    line-height: 0.98;
+  }
+
+  .about-summary p {
+    margin-bottom: 8px;
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+
+  .about-summary p:not(.about-lede) {
+    max-width: 26ch;
+  }
+
+  .about-flow {
+    gap: 16px;
+  }
+
+  .about-flow-rail {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    overflow: visible;
+  }
+
+  .about-flow-step {
+    min-width: 0;
+    min-height: 48px;
+    justify-content: center;
+    padding: 8px 9px;
+    text-align: center;
+  }
+
+  .about-flow-step span {
+    font-size: clamp(0.74rem, 3.4vw, 0.88rem);
+    line-height: 1.1;
+  }
+
+  .about-panel {
+    min-height: 0;
+    padding-top: 16px;
+  }
+
+  .about-panel-content h3,
+  .about-panel-sizer-content h3 {
+    display: none;
+  }
+
+  .about-panel-content p,
+  .about-panel-sizer-content p {
+    max-width: 30ch;
+    margin-bottom: 8px;
+    font-size: 1rem;
+    line-height: 1.48;
+  }
+
+  .projects-section {
+    padding-top: 54px;
+  }
+
+  .projects-layout {
+    gap: 0;
+    margin-bottom: 18px;
+  }
+
+  .projects-layout .section-header p:not(.eyebrow),
+  .projects-note {
+    display: none;
+  }
+
+  .project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .project-card,
+  .project-card:nth-child(1),
+  .project-card:nth-child(4),
+  .project-card:nth-child(5),
+  .project-card:nth-child(6),
+  .project-gateway,
+  .project-gateway .project-card-content {
+    grid-column: auto;
+    min-height: 164px;
+  }
+
+  .project-gateway {
+    border-radius: 8px;
+  }
+
+  .project-gateway .project-card-content {
+    gap: 8px;
+    justify-content: space-between;
+    padding: 15px;
+  }
+
+  .project-card-meta {
+    display: block;
+  }
+
+  .project-card-meta p {
+    font-size: 0.64rem;
+    line-height: 1.2;
+  }
+
+  .project-card-meta p:nth-child(2),
+  .project-gateway .project-card-content > p {
+    display: none;
+  }
+
+  .project-gateway h3 {
+    max-width: 9.5ch;
+    margin: 4px 0 0;
+    font-size: clamp(1.05rem, 5vw, 1.38rem);
+    line-height: 1.02;
+  }
+
+  .project-gateway .project-card-link {
+    margin-top: 8px;
+    border-bottom-width: 1px;
+    font-size: 0;
+  }
+
+  .project-gateway .project-card-link::before {
+    content: 'Open';
+    font-size: 0.78rem;
+  }
+
+  .contact-section {
+    padding-top: 54px;
+  }
+}
+
+@media (max-width: 360px) {
+  .project-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-card,
+  .project-card:nth-child(1),
+  .project-card:nth-child(4),
+  .project-card:nth-child(5),
+  .project-card:nth-child(6),
+  .project-gateway,
+  .project-gateway .project-card-content {
+    min-height: 136px;
+  }
+}
