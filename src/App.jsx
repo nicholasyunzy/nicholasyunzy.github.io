@@ -798,11 +798,23 @@ function App() {
   }, [currentPortraitImage]);
 
   useEffect(() => {
-    const syncRoute = () => setRouteHash(window.location.hash);
+    const syncRoute = () => {
+      setRouteHash(window.location.hash);
+      setIsMenuOpen(false);
+    };
+
     window.addEventListener('hashchange', syncRoute);
 
     return () => window.removeEventListener('hashchange', syncRoute);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
 
   useEffect(() => {
     const rotation = window.setInterval(() => {
@@ -863,7 +875,7 @@ function App() {
 
           <nav
             aria-label="Main navigation"
-            className={`site-nav ${isMenuOpen ? 'is-open' : ''}`}
+            className="site-nav"
             id="site-navigation"
           >
             <a href="#about" onClick={closeMenu}>About</a>
@@ -883,7 +895,7 @@ function App() {
           </button>
 
           <button
-            aria-controls="site-navigation"
+            aria-controls="mobile-navigation"
             aria-expanded={isMenuOpen}
             aria-label="Toggle navigation"
             className="menu-toggle"
@@ -896,6 +908,85 @@ function App() {
           </button>
         </div>
       </header>
+
+      <button
+        aria-label="Close navigation"
+        className={`menu-backdrop ${isMenuOpen ? 'is-open' : ''}`}
+        onClick={closeMenu}
+        tabIndex={isMenuOpen ? 0 : -1}
+        type="button"
+      />
+
+      <aside
+        aria-hidden={!isMenuOpen}
+        className={`mobile-drawer ${isMenuOpen ? 'is-open' : ''}`}
+        id="mobile-navigation"
+      >
+        <div className="drawer-top">
+          <a className="drawer-brand" href="#top" onClick={closeMenu}>
+            <span className="brand-mark-wrap" aria-hidden="true">
+              <BrandMark />
+            </span>
+            <span>Nicholas Yun</span>
+          </a>
+
+          <button
+            aria-label="Close navigation"
+            className="drawer-close"
+            onClick={closeMenu}
+            type="button"
+          >
+            X
+          </button>
+        </div>
+
+        <nav aria-label="Mobile navigation" className="drawer-nav">
+          <a aria-label="About" href="#about" onClick={closeMenu}>
+            <span>01</span>
+            <strong>About</strong>
+            <small>Curiosity, craft, and how I think</small>
+          </a>
+          <a aria-label="Projects" href="#projects" onClick={closeMenu}>
+            <span>02</span>
+            <strong>Projects</strong>
+            <small>Tools, writing, images, and experiments</small>
+          </a>
+          <a aria-label="Contact" href="#contact" onClick={closeMenu}>
+            <span>03</span>
+            <strong>Contact</strong>
+            <small>Hiring, collaboration, and conversations</small>
+          </a>
+        </nav>
+
+        <div className="drawer-actions">
+          <a className="drawer-contact" href={contactLinks.email} onClick={closeMenu}>
+            Email Nicholas
+          </a>
+          <button
+            aria-label={isNightMode ? 'Switch to day mode' : 'Switch to night mode'}
+            aria-pressed={isNightMode}
+            className="drawer-theme-toggle"
+            onClick={() => setIsNightMode((current) => !current)}
+            type="button"
+          >
+            <span aria-hidden="true" />
+            {isNightMode ? 'Night mode' : 'Light mode'}
+          </button>
+        </div>
+
+        <div className="drawer-socials" aria-label="Social links">
+          {socialLinks.slice(0, 3).map((link) => (
+            <a
+              aria-label={link.label}
+              href={link.href}
+              key={link.label}
+              onClick={closeMenu}
+            >
+              <SocialIcon icon={link.icon} />
+            </a>
+          ))}
+        </div>
+      </aside>
 
       <main id="main-content">
         {activeCollection ? (
