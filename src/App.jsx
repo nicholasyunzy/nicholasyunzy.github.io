@@ -426,11 +426,6 @@ const getPortraitForKey = (key) => {
 const projects = buildPortfolioGateways();
 const collectionItems = buildCollectionItems();
 
-const projectCategories = [
-  'All',
-  ...Array.from(new Set(projects.map((project) => project.category))),
-];
-
 const creativeModes = ['Code', 'Design', 'Words', 'Images', 'Stories', 'Experiments'];
 
 const heroSlides = [
@@ -702,9 +697,9 @@ function App() {
   const [activeHeroIndex, setActiveHeroIndex] = useState(0);
   const [activeAboutIndex, setActiveAboutIndex] = useState(0);
   const [isAboutVisible, setIsAboutVisible] = useState(true);
-  const [isPortraitLoaded, setIsPortraitLoaded] = useState(false);
-  const [activeProjectCategory, setActiveProjectCategory] = useState('All');
+  const [hasPortraitError, setHasPortraitError] = useState(false);
   const [isNightMode, setIsNightMode] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [routeHash, setRouteHash] = useState(() => window.location.hash);
   const aboutFadeTimerRef = useRef(null);
   const heroSlide = heroSlides[activeHeroIndex];
@@ -730,11 +725,6 @@ function App() {
   const activeCollectionItem = archiveRoute?.itemSlug
     ? activeCollectionItems.find((item) => item.slug === archiveRoute.itemSlug)
     : null;
-  const filteredProjects =
-    activeProjectCategory === 'All'
-      ? projects
-      : projects.filter((project) => project.category === activeProjectCategory);
-
   const handleHeroPointerMove = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * 100;
@@ -804,7 +794,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    setIsPortraitLoaded(false);
+    setHasPortraitError(false);
   }, [currentPortraitImage]);
 
   useEffect(() => {
@@ -827,26 +817,19 @@ function App() {
     };
   }, [activeAboutIndex]);
 
-  const renderProjectCard = (project, index) => (
+  const closeMenu = () => setIsMenuOpen(false);
+
+  const renderProjectCard = (project) => (
     <a
-      className="project-card"
+      className="project-card project-gateway"
       href={project.link || '#projects'}
       key={project.title}
+      onClick={closeMenu}
       style={{ '--project-accent': project.accent }}
     >
-      {project.image ? (
-        <div className="project-image-preview">
-          <img alt="" src={project.image} />
-          <span>{project.category}</span>
-        </div>
-      ) : (
-        <div className="project-image-placeholder">
-          <span>{project.category}</span>
-        </div>
-      )}
-
       <div className="project-card-content">
         <div className="project-card-meta">
+          <p>{project.category}</p>
           <p>{project.status}</p>
         </div>
 
@@ -866,17 +849,26 @@ function App() {
 
       <header className="site-header">
         <div className="site-header-inner">
-          <a className="brand-link" href="#top" aria-label="Nicholas Yun home">
+          <a
+            className="brand-link"
+            href="#top"
+            aria-label="Nicholas Yun home"
+            onClick={closeMenu}
+          >
             <span className="brand-mark-wrap" aria-hidden="true">
               <BrandMark />
             </span>
             <span className="brand-name">Nicholas Yun</span>
           </a>
 
-          <nav className="site-nav" aria-label="Main navigation">
-            <a href="#about">About</a>
-            <a href="#projects">Projects</a>
-            <a href="#contact">Contact</a>
+          <nav
+            aria-label="Main navigation"
+            className={`site-nav ${isMenuOpen ? 'is-open' : ''}`}
+            id="site-navigation"
+          >
+            <a href="#about" onClick={closeMenu}>About</a>
+            <a href="#projects" onClick={closeMenu}>Projects</a>
+            <a href="#contact" onClick={closeMenu}>Contact</a>
           </nav>
 
           <button
@@ -888,6 +880,19 @@ function App() {
           >
             <span aria-hidden="true" />
             {isNightMode ? 'Night' : 'Light'}
+          </button>
+
+          <button
+            aria-controls="site-navigation"
+            aria-expanded={isMenuOpen}
+            aria-label="Toggle navigation"
+            className="menu-toggle"
+            onClick={() => setIsMenuOpen((current) => !current)}
+            type="button"
+          >
+            <span />
+            <span />
+            <span />
           </button>
         </div>
       </header>
@@ -960,12 +965,10 @@ function App() {
                   <div className="portrait-frame">
                     <img
                       alt="Nicholas Yun"
-                      className={isPortraitLoaded ? 'is-loaded' : ''}
-                      onError={() => setIsPortraitLoaded(false)}
-                      onLoad={() => setIsPortraitLoaded(true)}
+                      onError={() => setHasPortraitError(true)}
                       src={currentPortraitImage}
                     />
-                    {!isPortraitLoaded && (
+                    {hasPortraitError && (
                       <div className="portrait-fallback" aria-hidden="true">
                         <span>NY</span>
                         <small>Portrait</small>
@@ -1095,43 +1098,21 @@ function App() {
               <p className="eyebrow">Portfolio</p>
               <h2>Selected Projects</h2>
               <p>
-                A living gallery of useful tools, personal artifacts, visual
-                studies, poems, stories, and experiments. Some are polished,
-                some are still becoming, and all of them are part of the same
-                habit: making ideas tangible.
+                A curated set of entrances into tools, images, writing, visual
+                studies, stories, and experiments. Different forms, one thread:
+                curiosity turned into tangible things.
               </p>
             </div>
 
             <p className="projects-note">
-              A flexible archive for work that ranges from practical tools to
-              personal experiments, arranged so each piece has room to feel like
-              itself.
-            </p>
-          </div>
-
-          <div className="gallery-controls">
-            <div className="category-row" aria-label="Project categories">
-              {projectCategories.map((category) => (
-                <button
-                  aria-pressed={category === activeProjectCategory}
-                  className="category-button"
-                  key={category}
-                  onClick={() => setActiveProjectCategory(category)}
-                  type="button"
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-
-            <p className="project-count" aria-live="polite">
-              Showing {filteredProjects.length} of {projects.length} archive areas
-              {activeProjectCategory !== 'All' ? ` in ${activeProjectCategory}` : ''}
+              Think of this as a small exhibition of work in progress and work
+              worth keeping: practical, personal, exploratory, and built to be
+              shared.
             </p>
           </div>
 
           <div className="project-grid">
-            {filteredProjects.map(renderProjectCard)}
+            {projects.map(renderProjectCard)}
           </div>
         </section>
 
